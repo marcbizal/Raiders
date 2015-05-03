@@ -40,11 +40,6 @@ define(function() {
 
 	Tile.prototype = {};
 	Tile.prototype.constructor = Tile;
-	Tile.prototype.addToScene = function(scene)
-	{
-		scene.add(this.mesh);
-	}
-
 	Tile.prototype.isSolid = function()
 	{
 		return ((this.surf !== SURF.GROUND) && 
