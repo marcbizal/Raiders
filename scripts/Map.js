@@ -5,15 +5,24 @@ define(['Tile', 'require'], function(Tile, require) {
 		this.name = name;
 		this.width = 0;
 		this.height = 0;
-		this.tile = new Array();;
+		this.tile = new Array();
+		this.group = new THREE.Group();
 	}
 
 	Map.prototype = {};
 	Map.prototype.constructor = Map;
-	Map.prototype.load = function(filename, scene)
+	Map.prototype.getWidth = function()
+	{
+		return this.width;
+	}
+	Map.prototype.getHeight = function()
+	{
+		return this.height;
+	}
+	Map.prototype.load = function(filename, scene, callback)
 	{
 		var that = this;
-		var map = require([filename], function(map) {
+		require([filename], function(map) {
 			that.name = map.name;
 			that.width = map.width;
 			that.height = map.height;
@@ -40,10 +49,14 @@ define(['Tile', 'require'], function(Tile, require) {
 				for (var x = 0; x < map.width; x++)
 				{
 					that.tile[y][x].update();
-					that.tile[y][x].addToScene(scene);
+					that.group.add(that.tile[y][x].mesh);
 				}		
 			}
+
+			callback();
 		});
+
+		scene.add(this.group);
 		console.dir(this);
 	}
 	Map.prototype.getTile = function(x, y)
@@ -61,4 +74,4 @@ define(['Tile', 'require'], function(Tile, require) {
 	}
 
 	return Map;
-})
+});

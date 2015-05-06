@@ -32,7 +32,7 @@ define(function() {
 		this.geometry = new THREE.Geometry();
 		this.texture = new THREE.Texture();
 		this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe: true} ));
-
+		
 		this.surf = surf;
 		this.height = 0;
 		this.undiscovered = false;
@@ -40,11 +40,6 @@ define(function() {
 
 	Tile.prototype = {};
 	Tile.prototype.constructor = Tile;
-	Tile.prototype.addToScene = function(scene)
-	{
-		scene.add(this.mesh);
-	}
-
 	Tile.prototype.isSolid = function()
 	{
 		return ((this.surf !== SURF.GROUND) && 
@@ -263,22 +258,25 @@ define(function() {
 			);
 		}
 
-		topLeftVertex.y = (topLeftVertex.y*1.2)+(this.height*HEIGHT_MULTIPLER);
-		topRightVertex.y = (topRightVertex.y*1.2)+(right.height*HEIGHT_MULTIPLER);
-		bottomRightVertex.y = (bottomRightVertex.y*1.2)+(bottomRight.height*HEIGHT_MULTIPLER);
-		bottomLeftVertex.y = (bottomLeftVertex.y*1.2)+(bottom.height*HEIGHT_MULTIPLER);
+		topLeftVertex.y = (topLeftVertex.y*1.0)+(this.height*HEIGHT_MULTIPLER);
+		topRightVertex.y = (topRightVertex.y*1.0)+(right.height*HEIGHT_MULTIPLER);
+		bottomRightVertex.y = (bottomRightVertex.y*1.0)+(bottomRight.height*HEIGHT_MULTIPLER);
+		bottomLeftVertex.y = (bottomLeftVertex.y*1.0)+(bottom.height*HEIGHT_MULTIPLER);
 
 		this.geometry.computeFaceNormals();	
 		this.geometry.computeVertexNormals();
 
 		this.texture = new THREE.ImageUtils.loadTexture(textureName);
 		this.texture.minFilter = THREE.NearestFilter;
+		this.texture.magFilter = THREE.NearestFilter;
 		this.texture.flipY = false;
 
-		this.mesh = THREE.SceneUtils.createMultiMaterialObject(this.geometry, [
+		this.mesh = new THREE.SceneUtils.createMultiMaterialObject(this.geometry, [
     		new THREE.MeshPhongMaterial( { map: this.texture, shininess: 0 } ),
     		//new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe: true} )
 		]);
+
+		this.mesh.userData = { parent: this };
 	}
 
 	return Tile;

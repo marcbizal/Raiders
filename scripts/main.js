@@ -1,87 +1,154 @@
-require(['Map'], function (Map) {
+require(['World'], function (World) {
 	'use strict';
 
-	var FOV = 90;
+	var DEFAULT_FOV = 90;
 
-	var ROCK_FOG
-	var LAVA_FOG
-	var ICE_FOG
+	// THREE
+	var camera, controls, renderer;
+	var loader = new THREE.ColladaLoader();
 
-	function Game(mapFile) 
+	// STATS
+	var stats;
+
+	// RAIDERS
+	var world;
+	var light;
+	var mouse = new THREE.Vector2();
+	var mouse3D = new THREE.Vector3();
+
+	var timeSinceMouseMove;
+	var hoveredObject;
+	var selectedObject;
+
+	var isMouseDown = false;
+	var mouseDownPosition = new THREE.Vector2();
+
+	init();
+	animate();
+
+	function init() 
 	{
-		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera(FOV, window.innerWidth/window.innerHeight, 0.0001, 1000);
-		this.focus = new THREE.Vector3( 12.5, 0, 12.5 );
-		this.renderer = new THREE.WebGLRenderer({ antialiasing: true });
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		camera = new THREE.PerspectiveCamera(DEFAULT_FOV, window.innerWidth/window.innerHeight, 0.0001, 1000);
+		controls = new THREE.OrbitControls(camera);
 
-		this.stats = new Stats();
-		this.stats.setMode(0); // 0: fps, 1: ms
+		renderer = new THREE.WebGLRenderer({ antialiasing: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+
+		stats = new Stats();
+		stats.setMode(0); // 0: fps, 1: ms
 
 		// align top-left
-		this.stats.domElement.style.position = 'absolute';
-		this.stats.domElement.style.left = '0px';
-		this.stats.domElement.style.top = '0px';
+		stats.domElement.style.position = 'absolute';
+		stats.domElement.style.left = '0px';
+		stats.domElement.style.top = '0px';
 
-		document.body.appendChild( this.stats.domElement );	
+		world = new World();
+		world.loadMap('../maps/Level05', function() {
+			var targetX = (world.map.getWidth() / 2)+1;
+			var targetY = (world.map.getHeight() / 2)-2;
 
-		this.ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
-		this.scene.add( this.ambientLight );
+			camera.position.set(targetX-2, 3, targetY+2);
+			controls.target.set(targetX, 0, targetY);
+		});
 
-		this.light = new THREE.PointLight( 0xffffff, 1, 7 );
-		this.light.position.set( 12.5, 3, 12.5 );
-		this.scene.add( this.light );
-		this.scene.fog = new THREE.FogExp2( 0x6e6e9b, 0.05 );
+		//loader.load('models/teleport-pad.dae', function (model) {
+  			//world.scene.add(model.scene);
+		//});
 
-		this.map = new Map();
-		this.map.load(mapFile, this.scene);
+		light = new THREE.PointLight( 0xffffff, 1, 7 );
+		light.position.set( 12.5, 3, 12.5 );
+		world.scene.add( light );
+		world.scene.fog = new THREE.FogExp2( 0x6e6e9b, 0.05 );
 
-		document.body.appendChild( this.renderer.domElement );
+		document.body.appendChild(renderer.domElement);
+		document.body.appendChild(stats.domElement);
+
+		window.addEventListener('resize', onWindowResize, false);
+		window.addEventListener('mousemove', onMouseMove, false);
+		window.addEventListener('mousedown', onMouseDown, false);
+		window.addEventListener('mouseup', onMouseUp, false);
 	}
 
-	Game.prototype.constructor = Game;
-	Game.prototype.update = function() {
-		this.stats.begin();
+	function animate() {
+		stats.begin();
 
-		// Update
-		var that = this;
-		var timer = new Date().getTime() * 0.0005;
-		this.camera.position.y = 3;
-		this.camera.position.x = 12.5 + Math.cos( timer ) * 5;
-  		this.camera.position.z = 12.5 + Math.sin( timer ) * 5;
-		this.camera.lookAt(this.focus);
+		light.position.set(mouse3D.x, mouse3D.y+3, mouse3D.z);
+		controls.update();
+		renderer.render(world.scene, camera);
+		stats.end();
 
-		// Render
-		this.renderer.render( this.scene, this.camera );
+		requestAnimationFrame(animate);
+	}
 
-		this.stats.end();
+	function onMouseDown()
+	{
+		isMouseDown = true;
+		mouseDownPosition = mouse.clone();
+	}
 
-		requestAnimationFrame( function() { that.update(); } );
-	};
-	Game.prototype.handleKeypress = function(key) {
-		//console.log(key);
-		switch (key)
-		{
-			case 119:
-			this.camera.position.z += 1;
-			break;
-			case 115:
-			this.camera.position.z -= 1;
-			break;
-			case 100:
-			this.camera.position.x += 1;
-			break;
-			case 97:
-			this.camera.position.x -= 1;
-			break;
+	function onMouseUp()
+	{
+		isMouseDown = false;
+		var distance = mouseDownPosition.distanceTo(mouse);
+		if (distance < 2) {
+			if (selectedObject != undefined)
+				selectedObject.mesh.children[0].material.color.setHex( 0xffffff );
+
+			selectedObject = getIntersectObject();
+
+			if (selectedObject != undefined)
+				selectedObject.mesh.children[0].material.color.setHex( 0x7f00ff );
 		}
+		mouseDownPosition = new THREE.Vector2();
 	}
 
-	var theGame = new Game('../maps/Level05');
-	requestAnimationFrame( function() { theGame.update(); } );
+	function getIntersectObject()
+	{
+		return getIntersect().object.parent.userData.parent;
+	}
 
-	document.onkeypress = function(e) { 
-		e = e || window.event;
-		theGame.handleKeypress(e.keyCode || e.which);
+	function getIntersect()
+	{
+		var raycaster = new THREE.Raycaster();
+		raycaster.setFromCamera( mouse, camera );	
+		var intersects = raycaster.intersectObjects( world.map.group.children, true );
+
+		if (intersects.length > 0)
+	    {
+			return intersects[0];;
+	    }  
+	    else
+	    {
+	    	return null;
+	    }
+	}
+
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	}
+
+	function onMouseMove(event)
+	{
+		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+		clearTimeout(timeSinceMouseMove);
+
+		var intersect = getIntersect();
+
+		if (intersect != null)
+	    {
+	    	if (!isMouseDown)
+	    	{
+		    	mouse3D.x = intersect.point.x;
+		    	mouse3D.y = intersect.point.y;
+		    	mouse3D.z = intersect.point.z;
+	    	}
+	    	timeSinceMouseMove = setTimeout(function () { hoveredObject = intersect.object.parent.userData.parent; }, 500);
+	    }  
 	}
 });
