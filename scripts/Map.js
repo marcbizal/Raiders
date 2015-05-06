@@ -6,7 +6,7 @@ define(['Tile', 'require'], function(Tile, require) {
 		this.width = 0;
 		this.height = 0;
 		this.tile = new Array();
-		this.meshes = new THREE.Group();
+		this.group = new THREE.Group();
 	}
 
 	Map.prototype = {};
@@ -49,14 +49,15 @@ define(['Tile', 'require'], function(Tile, require) {
 				for (var x = 0; x < map.width; x++)
 				{
 					that.tile[y][x].update();
-					that.meshes.add(that.tile[y][x].mesh);
+					that.group.add(that.tile[y][x].mesh);
 				}		
 			}
 
 			callback();
 		});
 
-		scene.add(this.meshes);
+		scene.add(this.group);
+		console.dir(this);
 	}
 	Map.prototype.getTile = function(x, y)
 	{
