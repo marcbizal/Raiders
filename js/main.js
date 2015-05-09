@@ -1,4 +1,4 @@
-require(['World'], function (World) {
+require(['World', 'Building'], function (World, Building) {
 	'use strict';
 
 	var DEFAULT_FOV = 90;
@@ -13,6 +13,7 @@ require(['World'], function (World) {
 	// RAIDERS
 	var world;
 	var light;
+	var teleportPad;
 	var mouse = new THREE.Vector2();
 	var mouse3D = new THREE.Vector3();
 
@@ -56,11 +57,14 @@ require(['World'], function (World) {
 
 			camera.position.set(targetX-2, 3, targetY+2);
 			controls.target.set(targetX, 0, targetY);
-		});
 
-		//loader.load('models/teleport-pad.dae', function (model) {
-  			//world.scene.add(model.scene);
-		//});
+			teleportPad = new Building();
+			teleportPad.scene = world.scene;
+			teleportPad.setX(14.5);
+			teleportPad.setZ(10.5);
+			var y = world.map.getY(14.5, 10.5);
+			teleportPad.setY(y + 0.1);
+		});
 
 		light = new THREE.PointLight( 0xffffff, 1, 7 );
 		light.position.set( 12.5, 3, 12.5 );

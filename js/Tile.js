@@ -51,6 +51,14 @@ define(['TextureManager'], function(TextureManager) {
 				(this.surf !== SURF.RUBBLE)) ||
 				(this.undiscovered);
 	}
+	Tile.prototype.getY = function(x, z)
+	{
+		var raycaster = new THREE.Raycaster();
+		raycaster.set(new THREE.Vector3(x, 3, z), new THREE.Vector3(0, -1, 0));
+		var intersect = raycaster.intersectObjects(this.mesh.children, true);
+
+		return intersect[0].point.y;
+	}
 
 	Tile.prototype.update = function()
 	{

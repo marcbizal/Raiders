@@ -1,16 +1,20 @@
 define(['Tile', 'require'], function(Tile, require) {
 	'use strict';
 
+	var kTileTypesFile = './js/TileTypes.json';
+
 	function Map()
 	{
 		this.name = "";
 		this.width = 0;
 		this.height = 0;
-		this.biome = "ice";
+		this.biome = "rock";
+
+		// Load tile types
 		this.tileTypes = null;
 		this.loadTileTypes();
 
-		this.tile = new Array();
+		this.tile = [];
 		this.group = new THREE.Group();
 	}
 
@@ -39,13 +43,18 @@ define(['Tile', 'require'], function(Tile, require) {
 		}
 	}
 
+	Map.prototype.getY = function(x, z)
+	{
+		return this.getTile(Math.floor(x), Math.floor(z)).getY(x, z);
+	}
+
 	Map.prototype.updateRect = function(top, left, width, height)
 	{
 		for (var y = top; y < height; y++)
 		{
 			for (var x = left; x < width; x++)
 			{
-				that.tile[y][x].update();
+				this.tile[y][x].update();
 			}		
 		}
 	}
@@ -62,7 +71,7 @@ define(['Tile', 'require'], function(Tile, require) {
 			}
 		}
 
-		xhr.open('GET', './js/TileTypes.json', true);
+		xhr.open('GET', kTileTypesFile, true);
 		xhr.send();
 	}
 
@@ -72,7 +81,6 @@ define(['Tile', 'require'], function(Tile, require) {
 
 		var that = this;
 		xhr.onreadystatechange = function() {
-
 			if (xhr.readyState == 4 && xhr.status == 200)
 			{
 				var data = JSON.parse(xhr.responseText);
