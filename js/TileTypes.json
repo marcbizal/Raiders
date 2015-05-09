@@ -1,0 +1,60 @@
+[
+	{
+		"name": "Ground",
+		"health": -1,
+		"textures": ["00.bmp"]
+	},
+	{
+		"name": "Solid Rock",
+		"health": -1,
+		"textures": ["05.bmp", "35.bmp", "55.bmp"]
+	},
+	{
+		"name": "Hard Rock",
+		"health": 27000,
+		"textures": ["04.bmp", "34.bmp", "54.bmp", "24.bmp"]
+	},
+	{
+		"name": "Loose Rock",
+		"health": 12000,
+		"textures": ["03.bmp", "33.bmp", "53.bmp", "23.bmp"]
+	},
+	{
+		"name": "Dirt",
+		"health": 600,
+		"textures": ["02.bmp", "32.bmp", "52.bmp", "22.bmp"]
+	},
+	{
+		"name": "Soil",
+		"health": 300,
+		"textures": ["01.bmp", "31.bmp", "51.bmp", "21.bmp"]
+	},
+	{
+		"name": "Lava",
+		"health": -1,
+		"textures": ["46.bmp", "16.bmp", "26.bmp", "36.bmp"]
+	},
+	{
+		
+	},
+	{
+		"name": "Ore Seam",
+		"health": 5000,
+		"textures": ["40.bmp"]
+	},
+	{
+		"name": "Water",
+		"health": -1,
+		"textures": ["45.bmp"]
+	},
+	{
+		"name": "Energy Crystal Seam",
+		"health": 5000,
+		"textures": ["20.bmp"]
+	},
+	{
+		"name": "Recharge Seam",
+		"health": -1,
+		"textures": ["67.bmp"]
+	}
+]
