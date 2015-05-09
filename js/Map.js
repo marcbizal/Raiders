@@ -131,7 +131,7 @@ define(['Tile', 'require'], function(Tile, require) {
 		if ((x >= this.width || x < 0) || (y >= this.height || y < 0)) 
 		{
 			// Return an out-of-bounds tile
-			return new Tile(null, x, y, 1);
+			return new Tile(null, x, y);
 		}
 		else
 		{

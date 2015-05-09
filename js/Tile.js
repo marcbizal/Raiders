@@ -34,7 +34,7 @@ define(['TextureManager'], function(TextureManager) {
 		this.texture = null;
 		this.mesh = null;
 		
-		this.surf = 0;
+		this.surf = 1;
 		this.height = 0;
 		this.undiscovered = false;
 
