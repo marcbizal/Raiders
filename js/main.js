@@ -60,8 +60,8 @@ require(['World', 'Building'], function (World, Building) {
 
 			teleportPad = new Building();
 			teleportPad.scene = world.scene;
-			teleportPad.setX(14.5);
-			teleportPad.setZ(10.5);
+			teleportPad.setX(14);
+			teleportPad.setZ(10);
 			var y = world.map.getY(14.5, 10.5);
 			teleportPad.setY(y + 0.1);
 		});
@@ -77,6 +77,8 @@ require(['World', 'Building'], function (World, Building) {
 		window.addEventListener('mousemove', onMouseMove, false);
 		window.addEventListener('mousedown', onMouseDown, false);
 		window.addEventListener('mouseup', onMouseUp, false);
+
+		window.addEventListener('keydown', onKeyDown, false);
 	}
 
 	function animate() {
@@ -93,23 +95,18 @@ require(['World', 'Building'], function (World, Building) {
 	function onMouseDown()
 	{
 		isMouseDown = true;
-		mouseDownPosition = mouse.clone();
 	}
 
 	function onMouseUp()
 	{
 		isMouseDown = false;
-		var distance = mouseDownPosition.distanceTo(mouse);
-		if (distance < 2) {
-			if (selectedObject != undefined)
-				selectedObject.mesh.children[0].material.color.setHex( 0xffffff );
+		if (selectedObject !== undefined)
+			selectedObject.mesh.children[0].material.color.setHex( 0xffffff );
 
-			selectedObject = getIntersectObject();
+		selectedObject = getIntersectObject();
 
-			if (selectedObject != undefined)
-				selectedObject.mesh.children[0].material.color.setHex( 0x7f00ff );
-		}
-		mouseDownPosition = new THREE.Vector2();
+		if (selectedObject !== undefined)
+			selectedObject.mesh.children[0].material.color.setHex( 0x7f00ff );
 	}
 
 	function getIntersectObject()
@@ -160,5 +157,27 @@ require(['World', 'Building'], function (World, Building) {
 	    	}
 	    	timeSinceMouseMove = setTimeout(function () { hoveredObject = intersect.object.parent.userData.parent; }, 500);
 	    }  
+	}
+
+	function onKeyDown(event)
+	{
+		 var keycode = event.keyCode ? event.keyCode : event.charCode
+
+		 switch (keycode)
+		 {
+		 	case 67:
+			{
+				if (selectedObject)
+		 		{
+		 			selectedObject.collapse();
+		 		}
+		 		break;
+		 	}
+
+		 	default:
+		 	{
+		 		break;
+		 	}
+		 }
 	}
 });

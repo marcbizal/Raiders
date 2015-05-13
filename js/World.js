@@ -8,6 +8,7 @@ define(['Map'], function(Map) {
 
 		// Create ambient light
 		this.ambientLight = new THREE.AmbientLight( 0x0A0A0A );
+		//this.ambientLight = new THREE.AmbientLight( 0xFFFFFF );
 		this.scene.add( this.ambientLight );
 	}
 

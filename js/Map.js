@@ -96,7 +96,7 @@ define(['Tile', 'require'], function(Tile, require) {
 						// Set surf
 						that.tile[y].push(new Tile(that, x, y)); 
 						that.tile[y][x].surf = data.surf[y][x];
-						that.tile[y][x].height = data.high[y][x];
+						that.tile[y][x].high = data.high[y][x];
 
 						// Set undiscovered flag
 						if (data.dugg[y][x] == 2)
@@ -111,7 +111,7 @@ define(['Tile', 'require'], function(Tile, require) {
 					for (var x = 0; x < data.width; x++)
 					{
 						that.tile[y][x].update();
-						that.group.add(that.tile[y][x].mesh);
+						//that.group.add(that.tile[y][x].mesh);
 					}		
 				}
 

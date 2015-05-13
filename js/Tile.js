@@ -1,12 +1,36 @@
-define(['TextureManager'], function(TextureManager) {
+define(["TextureManager"], function(TextureManager) {
 
 	var TextureManager = TextureManager.getTextureManager();
-	function pad(num, size) {
+
+	// UTILITY FUNCTIONS
+	function zerofill(num, size) {
     	var s = num+"";
     	while (s.length < size) s = "0" + s;
     	return s;
 	}
 
+	function mergeObjects()
+	{
+		var ret = {};
+		for (var i = 0; i < arguments.length; i++) {
+			var obj = arguments[i];
+			for (var property in obj) { 
+				ret[property] = obj[property]; 
+			}
+		}
+		return ret;
+	}
+
+	function iterateProperties(object, func)
+	{
+		for (var property in object) {
+			if (object.hasOwnProperty(property)) {
+				func(object[property]);
+			}
+		}
+	}
+
+	// CONSTANTS
 	var HEIGHT_MULTIPLER = 0.05;
 
 	// SURF TYPES
@@ -24,8 +48,7 @@ define(['TextureManager'], function(TextureManager) {
         RECHARGE_SEAM: 	11
 	}
 
-	function Tile(parent, x, y)
-	{
+	function Tile(parent, x, y) {
 		this.parent = parent;
 		this.x = x;
 		this.y = y;
@@ -35,7 +58,7 @@ define(['TextureManager'], function(TextureManager) {
 		this.mesh = null;
 		
 		this.surf = 1;
-		this.height = 0;
+		this.high = 0;
 		this.undiscovered = false;
 
 		this.health = -1;
@@ -43,16 +66,36 @@ define(['TextureManager'], function(TextureManager) {
 
 	Tile.prototype = {};
 	Tile.prototype.constructor = Tile;
-	Tile.prototype.isSolid = function()
-	{
+
+	Tile.prototype.isSolid = function() {
 		return ((this.surf !== SURF.GROUND) && 
 				(this.surf !== SURF.WATER) && 
-				(this.surf !== SURF.LAVA) && 
-				(this.surf !== SURF.RUBBLE)) ||
+				(this.surf !== SURF.LAVA)) ||
 				(this.undiscovered);
 	}
-	Tile.prototype.getY = function(x, z)
-	{
+
+	Tile.prototype.explore = function() {
+		if(this.undiscovered)
+		{
+			this.undiscovered = false;
+			iterateProperties(this.getAllNeighbors(), function(neighbor) {
+				neighbor.update();
+			});
+		}
+	}
+
+	Tile.prototype.collapse = function() {
+		if(this.isSolid())
+		{
+			this.surf = SURF.GROUND;
+			this.update();
+			iterateProperties(this.getAllNeighbors(), function(neighbor) {
+				neighbor.update();
+			});
+		}
+	}
+
+	Tile.prototype.getY = function(x, z) {
 		var raycaster = new THREE.Raycaster();
 		raycaster.set(new THREE.Vector3(x, 3, z), new THREE.Vector3(0, -1, 0));
 		var intersect = raycaster.intersectObjects(this.mesh.children, true);
@@ -60,27 +103,40 @@ define(['TextureManager'], function(TextureManager) {
 		return intersect[0].point.y;
 	}
 
-	Tile.prototype.update = function()
-	{
-		var topLeft = this.parent.getTile(this.x-1, this.y-1);
-		var top = this.parent.getTile(this.x, this.y-1);
-		var topRight = this.parent.getTile(this.x+1, this.y-1);
-		var right = this.parent.getTile(this.x+1, this.y);
-		var bottomRight = this.parent.getTile(this.x+1, this.y+1);
-		var bottom = this.parent.getTile(this.x, this.y+1);
-		var bottomLeft = this.parent.getTile(this.x-1, this.y+1);
-		var left = this.parent.getTile(this.x-1, this.y);
+	Tile.prototype.getNeighbors = function() {
+		return {
+			"top": this.parent.getTile(this.x, this.y-1),
+			"right": this.parent.getTile(this.x+1, this.y),
+			"bottom": this.parent.getTile(this.x, this.y+1),
+			"left": this.parent.getTile(this.x-1, this.y)
+		};
+	}
 
-		if (topLeft.isSolid() &&
-			top.isSolid() &&
-			topRight.isSolid() &&
-			right.isSolid() &&
-			bottomRight.isSolid() &&
-			bottom.isSolid() &&
-			bottomLeft.isSolid() &&
-			left.isSolid())
-		{
+	Tile.prototype.getDiagonalNeighbors = function() {
+		return {
+			"topLeft": this.parent.getTile(this.x-1, this.y-1),
+			"topRight": this.parent.getTile(this.x+1, this.y-1),
+			"bottomRight": this.parent.getTile(this.x+1, this.y+1),
+			"bottomLeft": this.parent.getTile(this.x-1, this.y+1)
+		};
+	}
+
+	Tile.prototype.getAllNeighbors = function() {
+		return mergeObjects(this.getNeighbors(), this.getDiagonalNeighbors());
+	}
+
+	Tile.prototype.update = function() {
+		var n = this.getAllNeighbors();
+
+		var isSurrounded = true;
+		iterateProperties(n, function(neighbor) {
+			isSurrounded = isSurrounded && neighbor.isSolid();
+		});
+
+		if (isSurrounded) {
 			this.undiscovered = true;
+		} else {
+			this.explore();
 		}
 
 		var topLeftVertex = new THREE.Vector3(this.x, 0, this.y);
@@ -90,22 +146,22 @@ define(['TextureManager'], function(TextureManager) {
 
 		if (this.isSolid())
 		{
-			if (topLeft.isSolid() && (top.isSolid() && left.isSolid()))
+			if (n["topLeft"].isSolid() && (n["top"].isSolid() && n["left"].isSolid()))
 			{
 				topLeftVertex.y = 1;
 			}
 
-			if (topRight.isSolid() && (top.isSolid() && right.isSolid()))
+			if (n["topRight"].isSolid() && (n["top"].isSolid() && n["right"].isSolid()))
 			{
 				topRightVertex.y = 1;
 			}
 
-			if (bottomRight.isSolid() && (bottom.isSolid() && right.isSolid()))
+			if (n["bottomRight"].isSolid() && (n["bottom"].isSolid() && n["right"].isSolid()))
 			{
 				bottomRightVertex.y = 1;
 			}
 
-			if (bottomLeft.isSolid() && (bottom.isSolid() && left.isSolid()))
+			if (n["bottomLeft"].isSolid() && (n["bottom"].isSolid() && n["left"].isSolid()))
 			{
 				bottomLeftVertex.y = 1;
 			}
@@ -117,6 +173,7 @@ define(['TextureManager'], function(TextureManager) {
 		// 3: INVERTED-CORNER
 
 		var wallType = topLeftVertex.y + topRightVertex.y + bottomRightVertex.y + bottomLeftVertex.y;
+		if (wallType === 0) this.surf = SURF.GROUND;
 		var uvOffset = 0;
 
 		// not-rotated
@@ -163,12 +220,12 @@ define(['TextureManager'], function(TextureManager) {
 			}
 		}
 
-		var textureName = this.parent.biome + '/';
+		var textureName = this.parent.biome + "/";
 		var textureIndex = -1;
 
 		if (this.undiscovered)
 		{
-			textureName += '70.bmp';
+			textureName += "70.bmp";
 		}
 		else
 		{
@@ -212,6 +269,7 @@ define(['TextureManager'], function(TextureManager) {
 		//		Quad 0-1-3-2
 		*/
 
+		this.parent.group.remove(this.mesh);
 		if (this.geometry) this.geometry.dispose();
 		this.geometry = new THREE.Geometry();
 
@@ -269,10 +327,10 @@ define(['TextureManager'], function(TextureManager) {
 			);
 		}
 
-		topLeftVertex.y = (topLeftVertex.y*1.0)+(this.height*HEIGHT_MULTIPLER);
-		topRightVertex.y = (topRightVertex.y*1.0)+(right.height*HEIGHT_MULTIPLER);
-		bottomRightVertex.y = (bottomRightVertex.y*1.0)+(bottomRight.height*HEIGHT_MULTIPLER);
-		bottomLeftVertex.y = (bottomLeftVertex.y*1.0)+(bottom.height*HEIGHT_MULTIPLER);
+		topLeftVertex.y = (topLeftVertex.y*1.0)+(this.high*HEIGHT_MULTIPLER);
+		topRightVertex.y = (topRightVertex.y*1.0)+(n["right"].high*HEIGHT_MULTIPLER);
+		bottomRightVertex.y = (bottomRightVertex.y*1.0)+(n["bottomRight"].high*HEIGHT_MULTIPLER);
+		bottomLeftVertex.y = (bottomLeftVertex.y*1.0)+(n["bottom"].high*HEIGHT_MULTIPLER);
 
 		this.geometry.computeFaceNormals();	
 		this.geometry.computeVertexNormals();
@@ -283,6 +341,7 @@ define(['TextureManager'], function(TextureManager) {
 		]);
 
 		this.mesh.userData = { parent: this };
+		this.parent.group.add(this.mesh);
 	}
 
 	return Tile;
