@@ -1,22 +1,18 @@
 {
     "fonts": {
         "src": "src/fonts/",
-        "build": "dist/fonts/"
+        "build": "../gh-pages/fonts/"
     },
     "scripts": {
         "src": "src/js/**/*.js",
-        "build": "dist/js/"
+        "build": "../gh-pages/js/"
     },
     "styles": {
         "src": "src/sass/**/*.{sass,scss}",
-        "build": "dist/css/"
+        "build": "../gh-pages/css/"
     },
     "images": {
         "src": "src/images/**/*",
-        "build": "dist/images/"
-    },
-    "svg": {
-        "src": "src/svg/*.svg",
-        "build": "dist/svg/"
+        "build": "../gh-pages/images/"
     }
 }

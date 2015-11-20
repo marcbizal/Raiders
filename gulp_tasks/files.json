@@ -24,19 +24,19 @@
     "copy": [
         {
             "src": "src/maps/**/*",
-            "dest": "dist/maps"
+            "dest": "../gh-pages/maps"
         },
         {
             "src": "src/models/**/*",
-            "dest": "dist/models"
+            "dest": "../gh-pages/models"
         },
         {
             "src": "src/fonts/*",
-            "dest": "dist/fonts"
+            "dest": "../gh-pages/fonts"
         },
         {
             "src": "src/*.html",
-            "dest": "dist"
+            "dest": "../gh-pages"
         }
     ]
 }

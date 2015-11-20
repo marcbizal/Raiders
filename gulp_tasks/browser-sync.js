@@ -2,7 +2,7 @@ module.exports = function(gulp, plugins, browserSync, reload, merge, paths, file
   return function() {
     browserSync.init({
       server: {
-        baseDir: "./dist/"
+        baseDir: "../gh-pages/"
       }
     });
   };
