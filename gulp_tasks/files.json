@@ -37,6 +37,10 @@
         {
             "src": "src/*.html",
             "dest": "../gh-pages"
+        },
+        {
+            "src": "src/js/*.json",
+            "dest": "../gh-pages/js"
         }
     ]
 }
