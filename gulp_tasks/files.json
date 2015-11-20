@@ -1,0 +1,42 @@
+{
+    "download": [
+        {
+            "from": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js",
+            "to": "src/vendor/js/loaders"
+        },
+        {
+            "from": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js",
+            "to": "src/vendor/js/controls"
+        },
+        {
+            "from": "https://raw.githubusercontent.com/mrdoob/stats.js/master/build/stats.min.js",
+            "to": "src/vendor/js/"
+        }
+    ],
+    "vendor_js": [
+        "node_modules/requirejs/require.js",
+        "node_modules/three/three.js",
+        "src/vendor/js/**/*.js"
+    ],
+    "js": [
+        "src/js/**/*.js"
+    ],
+    "copy": [
+        {
+            "src": "src/maps/**/*",
+            "dest": "dist/maps"
+        },
+        {
+            "src": "src/models/**/*",
+            "dest": "dist/models"
+        },
+        {
+            "src": "src/fonts/*",
+            "dest": "dist/fonts"
+        },
+        {
+            "src": "src/*.html",
+            "dest": "dist"
+        }
+    ]
+}

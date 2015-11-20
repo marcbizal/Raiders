@@ -1,0 +1,22 @@
+{
+    "fonts": {
+        "src": "src/fonts/",
+        "build": "dist/fonts/"
+    },
+    "scripts": {
+        "src": "src/js/**/*.js",
+        "build": "dist/js/"
+    },
+    "styles": {
+        "src": "src/sass/**/*.{sass,scss}",
+        "build": "dist/css/"
+    },
+    "images": {
+        "src": "src/images/**/*",
+        "build": "dist/images/"
+    },
+    "svg": {
+        "src": "src/svg/*.svg",
+        "build": "dist/svg/"
+    }
+}

@@ -40,8 +40,9 @@ require(['World', 'Building'], function (World, Building) {
 		document.body.appendChild(stats.domElement);
 	}
 
-	function init() 
+	function init()
 	{
+		console.log("Hello!");
 		camera = new THREE.PerspectiveCamera(DEFAULT_FOV, window.innerWidth/window.innerHeight, 0.0001, 1000);
 		controls = new THREE.OrbitControls(camera);
 
@@ -117,13 +118,13 @@ require(['World', 'Building'], function (World, Building) {
 	function getIntersect()
 	{
 		var raycaster = new THREE.Raycaster();
-		raycaster.setFromCamera( mouse, camera );	
+		raycaster.setFromCamera( mouse, camera );
 		var intersects = raycaster.intersectObjects( world.map.group.children, true );
 
 		if (intersects.length > 0)
 	    {
 			return intersects[0];;
-	    }  
+	    }
 	    else
 	    {
 	    	return null;
@@ -156,7 +157,7 @@ require(['World', 'Building'], function (World, Building) {
 		    	mouse3D.z = intersect.point.z;
 	    	}
 	    	timeSinceMouseMove = setTimeout(function () { hoveredObject = intersect.object.parent.userData.parent; }, 500);
-	    }  
+	    }
 	}
 
 	function onKeyDown(event)
