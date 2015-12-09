@@ -1,6 +1,6 @@
 var THREE = require("three.js");
 var Tile = require("./Tile.js");
-var kTileTypesFile = '../config/TileTypes.json';
+var kTileTypesFile = './config/TileTypes.json';
 
 function Map()
 {
