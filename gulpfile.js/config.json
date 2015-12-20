@@ -79,12 +79,12 @@
                 {
                     "src": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js",
                     "dest": "scripts/vendor/",
-                    "requires": "var THREE = require('three.js');"
+                    "requires": "import THREE from 'three.js';"
                 },
                 {
                     "src": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js",
                     "dest": "scripts/vendor/",
-                    "requires": "var THREE = require('three.js');"
+                    "requires": "import THREE from 'three.js';"
                 }
             ]
         }

@@ -20,6 +20,7 @@
     "test": "gulp production && karma start --single-run"
   },
   "dependencies": {
+    "pathfinding": "^0.4.17",
     "stats.js": "^1.0.0",
     "three.js": "^0.73.0"
   },

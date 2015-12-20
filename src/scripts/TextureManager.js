@@ -1,10 +1,21 @@
-var THREE = require("three.js");
+import THREE from "three.js";
 
+// Path to images
 var kImagePath = 'images/';
-var TextureManager = {
-	loaded: {},
-	load: function(filename)
-	{
+
+// Singleton TextureManager Class
+let instance = null;
+class TextureManager {
+	constructor() {
+		if (!instance) {
+			instance = this;
+
+			this.loaded = {};
+		}
+
+		return instance;
+	}
+	load(filename) {
 		if (this.loaded.hasOwnProperty(filename)) return this.loaded[filename];
 
 		this.loaded[filename] = new THREE.ImageUtils.loadTexture(kImagePath + filename);
@@ -14,4 +25,4 @@ var TextureManager = {
 	}
 }
 
-module.exports =  { getTextureManager: function () { return TextureManager; }};
+export default TextureManager;

@@ -1,11 +1,11 @@
-var THREE = require("three.js");
-			require("./vendor/ColladaLoader.js");
-			require("./vendor/OrbitControls.js");
+import THREE from "three.js";
+import "./vendor/ColladaLoader.js";
+import "./vendor/OrbitControls.js";
 
-var Stats = require("stats.js")
+import Stats from "stats.js";
 
-var World = require("./World.js");
-var Building = require("./Building.js");
+import World from "./World.js";
+import Building from "./Building.js";
 
 var DEFAULT_FOV = 90;
 
@@ -154,7 +154,7 @@ function onMouseMove(event)
 
 	var intersect = getIntersect();
 
-	if (intersect != null)
+	if (intersect !== null)
     {
     	if (!isMouseDown)
     	{
@@ -168,7 +168,7 @@ function onMouseMove(event)
 
 function onKeyDown(event)
 {
-	 var keycode = event.keyCode ? event.keyCode : event.charCode
+	 var keycode = event.keyCode ? event.keyCode : event.charCode;
 
 	 switch (keycode)
 	 {

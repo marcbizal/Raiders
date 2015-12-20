@@ -1,22 +1,24 @@
-var THREE = require("three.js");
-var Map = require("./Map.js");
+import THREE from "three.js";
+import Soundscape from "./Soundscape.js";
+import IceCavernSoundscape from "./IceCavernSoundscape.js";
+import Map from "./Map.js";
 
-function World()
-{
-	this.scene = new THREE.Scene();
-	this.map = new Map();
+class World {
+	constructor() {
+		this.scene = new THREE.Scene();
+		this.soundscape = new Soundscape(IceCavernSoundscape);
+		this.map = new Map();
 
-	// Create ambient light
-	this.ambientLight = new THREE.AmbientLight( 0x0A0A0A );
-	//this.ambientLight = new THREE.AmbientLight( 0xFFFFFF );
-	this.scene.add( this.ambientLight );
+		// Create ambient light
+		this.ambientLight = new THREE.AmbientLight( 0x0A0A0A );
+		//this.ambientLight = new THREE.AmbientLight( 0xFFFFFF );
+		this.scene.add( this.ambientLight );
+	}
+
+	loadMap(mapName, callback)
+	{
+		this.map.load(mapName, this.scene, callback);
+	}
 }
 
-World.prototype = {};
-World.prototype.loadMap = function(mapName, callback)
-{
-	this.map.load(mapName, this.scene, callback);
-}
-World.prototype.constructor = World;
-
-module.exports = World;
+export default World;
