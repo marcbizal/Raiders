@@ -1,5 +1,3 @@
-import THREE from "three.js";
-
 // Path to images
 var kImagePath = 'images/';
 

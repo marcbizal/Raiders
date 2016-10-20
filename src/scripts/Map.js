@@ -1,4 +1,3 @@
-import THREE from "three.js";
 import Tile from "./Tile.js";
 var kTileTypesFile = './config/TileTypes.json';
 

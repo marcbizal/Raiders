@@ -1,7 +1,3 @@
-import THREE from "three.js";
-import "./vendor/ColladaLoader.js";
-import "./vendor/OrbitControls.js";
-
 import Stats from "stats.js";
 
 import World from "./World.js";

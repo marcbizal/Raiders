@@ -1,4 +1,3 @@
-import THREE from "three.js";
 import TextureManager from "./TextureManager.js";
 import { mergeObjects, iterateProperties } from "./Utility.js";
 

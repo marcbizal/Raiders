@@ -1,4 +1,3 @@
-import THREE from "three.js";
 import Map from "./Map.js";
 
 let loader = new THREE.ColladaLoader();

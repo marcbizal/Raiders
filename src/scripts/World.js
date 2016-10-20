@@ -1,4 +1,3 @@
-import THREE from "three.js";
 import Soundscape from "./Soundscape.js";
 import IceCavernSoundscape from "./IceCavernSoundscape.js";
 import Map from "./Map.js";
