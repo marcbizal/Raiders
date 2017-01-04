@@ -10,9 +10,6 @@ Raiders is an experiment aimed at recreating Lego Rock Raiders using browser bas
 - Wall destruction by pressing [C]ollapse
 - Soundscapes!
 
-## Build Instructions
-Raiders uses a build system built on [gulp-starter](https://github.com/vigetlabs/gulp-starter), for full build instructions please follow their README.
-
 ### The Basics
 To get Raiders running in a development environment, please follow the following steps:
 
@@ -20,7 +17,7 @@ To get Raiders running in a development environment, please follow the following
 git clone https://github.com/marcbizal/Raiders.git
 cd Raiders
 npm install
-npm run gulp
+npm run build & npm run start
 ```
 
 **Enjoy!**
